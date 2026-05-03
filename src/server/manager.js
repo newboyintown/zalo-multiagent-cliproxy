@@ -127,7 +127,16 @@ class ZaloManager extends EventEmitter {
             });
         });
 
+        api.listener.on("error", (err) => {
+            error(`[Account ${ownId}] Listener error: ${err?.message || err}`);
+        });
+
         api.listener.on("closed", async (code) => {
+            if (code === 3000) {
+                warning(`Account ${ownId} closed (Duplicate connection). Stopped reconnecting.`);
+                this.instances.delete(ownId);
+                return;
+            }
             warning(`Connection closed for ${ownId} (code: ${code}). Re-login in 5s...`);
             this.instances.delete(ownId);
             await new Promise((r) => setTimeout(r, 5000));
@@ -166,6 +175,10 @@ class ZaloManager extends EventEmitter {
 
         saveCredentials(ownId, creds);
         addAccount(ownId, displayName, proxyUrl);
+
+        if (this.instances.has(ownId)) {
+            try { this.instances.get(ownId).listener.stop(); } catch {}
+        }
 
         this.instances.set(ownId, api);
         this.attachListener(api, ownId, proxyUrl);
