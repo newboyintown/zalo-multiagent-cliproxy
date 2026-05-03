@@ -55,7 +55,9 @@ program
             console.log();
         }
         // Auto-login before any command that needs it (skip for login/account/oa commands)
-        const skipAutoLogin = ["login", "account", "help", "version", "update", "oa", "mcp", "server"].includes(cmdName);
+        const skipAutoLogin = ["login", "account", "help", "version", "update", "oa", "mcp", "server"].includes(
+            cmdName,
+        );
         if (!skipAutoLogin) {
             await autoLogin(program.opts().json);
         }

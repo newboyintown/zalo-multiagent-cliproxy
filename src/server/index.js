@@ -33,7 +33,7 @@ export async function startServer(port = 3000, webhookUrl = null) {
                     await fetch(webhookUrl, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ accountId: ownId, event: eventType, data })
+                        body: JSON.stringify({ accountId: ownId, event: eventType, data }),
                     });
                 } catch (e) {
                     info(`Failed to post to webhook: ${e.message}`);

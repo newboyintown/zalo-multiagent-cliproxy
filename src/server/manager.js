@@ -2,7 +2,7 @@ import EventEmitter from "events";
 import { Zalo, LoginQRCallbackEventType } from "zca-js";
 import { HttpsProxyAgent } from "https-proxy-agent";
 import { ProxyAgent } from "undici";
-import { listAccounts, addAccount, getAccount } from "../core/accounts.js";
+import { listAccounts, addAccount } from "../core/accounts.js";
 import { loadCredentials, saveCredentials } from "../core/credentials.js";
 import { info, error, warning } from "../utils/output.js";
 
@@ -117,12 +117,12 @@ class ZaloManager extends EventEmitter {
     attachListener(api, ownId, proxyUrl) {
         const eventsToListen = ["message", "friend_event", "group_event", "reaction"];
 
-        eventsToListen.forEach(eventType => {
+        eventsToListen.forEach((eventType) => {
             api.listener.on(eventType, (msg) => {
                 this.emit("zalo_event", {
                     ownId,
                     eventType,
-                    data: msg
+                    data: msg,
                 });
             });
         });
@@ -177,7 +177,9 @@ class ZaloManager extends EventEmitter {
         addAccount(ownId, displayName, proxyUrl);
 
         if (this.instances.has(ownId)) {
-            try { this.instances.get(ownId).listener.stop(); } catch {}
+            try {
+                this.instances.get(ownId).listener.stop();
+            } catch {}
         }
 
         this.instances.set(ownId, api);
